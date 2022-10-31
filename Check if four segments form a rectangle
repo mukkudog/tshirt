@@ -1,0 +1,84 @@
+// C++ program to check whether it is possible
+// to make a rectangle from 4 segments
+#include <bits/stdc++.h>
+using namespace std;
+#define N 4
+
+// structure to represent a segment
+struct Segment
+{
+	int ax, ay;
+	int bx, by;
+};
+
+// Utility method to return square of distance
+// between two points
+int getDis(pair<int, int> a, pair<int, int> b)
+{
+	return (a.first - b.first)*(a.first - b.first) +
+		(a.second - b.second)*(a.second - b.second);
+}
+
+// method returns true if line Segments make
+// a rectangle
+bool isPossibleRectangle(Segment segments[])
+{
+	set< pair<int, int> > st;
+
+	// putting all end points in a set to
+	// count total unique points
+	for (int i = 0; i < N; i++)
+	{
+		st.insert(make_pair(segments[i].ax, segments[i].ay));
+		st.insert(make_pair(segments[i].bx, segments[i].by));
+	}
+
+	// If total unique points are not 4, then
+	// they can't make a rectangle
+	if (st.size() != 4)
+		return false;
+
+	// dist will store unique 'square of distances'
+	set<int> dist;
+
+	// calculating distance between all pair of
+	// end points of line segments
+	for (auto it1=st.begin(); it1!=st.end(); it1++)
+		for (auto it2=st.begin(); it2!=st.end(); it2++)
+			if (*it1 != *it2)
+				dist.insert(getDis(*it1, *it2));
+
+	// if total unique distance are more than 3,
+	// then line segment can't make a rectangle
+	if (dist.size() > 3)
+		return false;
+
+	// copying distance into array. Note that set maintains
+	// sorted order.
+	int distance[3];
+	int i = 0;
+	for (auto it = dist.begin(); it != dist.end(); it++)
+		distance[i++] = *it;
+
+	// If line seqments form a square
+	if (dist.size() == 2)
+	return (2*distance[0] == distance[1]);
+
+	// distance of sides should satisfy pythagorean
+	// theorem
+	return (distance[0] + distance[1] == distance[2]);
+}
+
+// Driver code to test above methods
+int main()
+{
+	Segment segments[] =
+	{
+		{4, 2, 7, 5},
+		{2, 4, 4, 2},
+		{2, 4, 5, 7},
+		{5, 7, 7, 5}
+	};
+
+	(isPossibleRectangle(segments))?cout << "Yes\n":cout << "No\n";
+}
